@@ -1,0 +1,52 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8"]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Cache dependencies
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt','requirements.dev.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+    
+    - name: Install dev dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.dev.txt
+
+    - name: Run code autoformatter
+      run: black --check .
+
+    - name: Run linter
+      run: flake8 .
+
+    - name: Run type checker
+      run: mypy src tests
+
+    - name: Install dependencies
+      run: python -m pip install -r requirements.txt
+
+    - name: Run tests
+      run: pytest tests --log-cli-level=DEBUG
+      timeout-minutes: 5
+      

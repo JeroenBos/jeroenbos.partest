@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug test",
+            "type": "python",
+            "request": "launch",
+            "args": [
+                "tests",
+                // "-k test_typeguard_hook"
+            ],
+            "program": "${workspaceFolder}/venv/Scripts/pytest.exe",
+            "console": "internalConsole",
+            "cwd": "${workspaceFolder}",
+            "env": {
+            },
+            "justMyCode": false
+        },
+    ]
+}
