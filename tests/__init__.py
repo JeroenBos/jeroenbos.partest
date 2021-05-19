@@ -1,4 +1,3 @@
-import os
 from importlib.machinery import ModuleSpec, SourceFileLoader
 from typing import List, Optional
 
@@ -11,14 +10,12 @@ class SrcTypeguardFinder(TypeguardFinder):
     This finetunes `./tests/conftest.py::sys.path.insert(1, "./src")`.
     """
 
-    path_prefixes: List[str] = [
-        "./src",  # pytest behavior locally
-        os.getcwd() + "/./src",  # pytest behavior on GitHub
-    ]
+    path_prefixes: List[str] = []
 
     @classmethod
     def applies(cls, path: Optional[str]) -> bool:
-        return path is not None and any(path.startswith(prefix) for prefix in cls.path_prefixes)
+        result = path is not None and any(path.startswith(prefix) for prefix in cls.path_prefixes)
+        return result
 
     def find_spec(self, fullname, path=None, target=None):
         result = super(SrcTypeguardFinder, self).find_spec(fullname, path, target)
