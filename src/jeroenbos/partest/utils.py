@@ -29,3 +29,9 @@ def markup(text: str, color: str = None) -> str:
     postfix = "\x1b[0m"
 
     return f"{prefix}{text}{postfix}"
+
+
+def append_to_file(path: str, contents: str):
+    """Appends the specified contents to the specified file"""
+    with open(path, "w+") as f:
+        f.write(contents)
