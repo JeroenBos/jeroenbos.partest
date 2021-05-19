@@ -11,6 +11,7 @@ logging.getLogger().setLevel("DEBUG")
 EXTRA_PATH = os.getcwd() + "/src"
 sys.path.insert(1, EXTRA_PATH)
 
-# apply runtime typechecking to "./src"
-SrcTypeguardFinder.path_prefixes.append(EXTRA_PATH)
+# apply runtime typechecking to "./src" and "./tests"
+SrcTypeguardFinder.path_prefixes.extend([EXTRA_PATH, os.getcwd() + "/tests"])
+
 importhook.install_import_hook([], cls=SrcTypeguardFinder)
