@@ -32,3 +32,16 @@ import pytest
     )
     yield path
     os.remove(path)
+
+
+@pytest.fixture
+def failing_test_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+def test_that_fails():
+    raise ValueError("Intended to fail")
+
+""",
+    )
+    return temp_test_file
