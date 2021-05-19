@@ -1,6 +1,7 @@
 # Description
 
-A project template. Search and replace all occurrences of `partest` and `template` to start using this template.
+A test parallelization library. 
+
 
 
 
