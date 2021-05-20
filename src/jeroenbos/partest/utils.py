@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from typing import ContextManager, TextIO
+from typing import ContextManager
 
 from _pytest._io.terminalwriter import TerminalWriter
 
@@ -35,8 +35,3 @@ def append_to_file(path: str, contents: str):
     """Appends the specified contents to the specified file"""
     with open(path, "a+") as f:
         f.write(contents)
-
-
-def to_string(file: TextIO) -> str:
-    file.seek(0)
-    return file.read()
