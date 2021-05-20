@@ -155,6 +155,93 @@ class TestThatFailsWithFailingTearDown(TestCase):
 
 
 @fixture
+def skipped_test_with_failing_class_teardown_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+class TestSkippedTestWithFailingTearDown(TestCase):
+    @pytest.mark.skip("Intended to be skipped")
+    def test_that_is_skipped():
+        raise ValueError("Intended to be skipped")
+
+    @classmethod
+    def tearDownClass(cls):
+        raise ValueError("Class teardown intended to fail")
+
+""",
+    )
+    return temp_test_file
+
+
+@fixture
+def test_with_failing_class_setup_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+class TestWithFailingTearDown(TestCase):
+    def test_after_failed_setup(self):
+        raise ValueError("After setup intended to fail")
+
+    @classmethod
+    def setUpClass(cls):
+        raise ValueError("setUpClass intended to fail")
+
+""",
+    )
+    return temp_test_file
+
+
+@fixture
+def test_with_failing_class_teardown_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+class TestWithFailingTearDown(TestCase):
+    def test_before_failing_teardown(self):
+        pass
+
+    @classmethod
+    def tearDownClass(cls):
+        raise ValueError("tearDownClass intended to fail")
+
+""",
+    )
+    return temp_test_file
+
+
+@fixture
+def test_with_failing_class_setup_and_class_teardown_file(test_with_failing_class_setup_file: str) -> str:
+    append_to_file(
+        test_with_failing_class_setup_file,
+        """
+    @classmethod
+    def tearDownClass(cls):
+        raise ValueError("Class teardown intended to fail")
+
+""",
+    )
+    return test_with_failing_class_setup_file
+
+
+@fixture
+def test_that_fails_and_class_teardown_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+class TestThatFailsWithFailingTearDown(TestCase):
+    def test_before_failing_teardown(self):
+        raise ValueError("Test intended to fail")
+
+    @classmethod
+    def tearDownClass(cls):
+        raise ValueError("Class teardown intended to fail")
+
+""",
+    )
+    return temp_test_file
+
+
+@fixture
 def temp_test_directory():
     dir = tempfile.mkdtemp()
 

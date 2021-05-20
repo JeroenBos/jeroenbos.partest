@@ -80,12 +80,16 @@ def get_summary_char(report: TestReport) -> str:
     if report.skipped:
         return markup("s", "yellow")
     elif report.failed:
-        if report.when == "teardown":
-            # When a test fails, a failing test teardown is considered an "error" -not a "failure"- by pytest
-            # (when a test succeeds, a failing test teardown is still considered "failure" by pytest)
-            return markup("E", "red")
-        else:
+        # A failing class setup or failing class teardown is considered an "error" -not a "failure"- by pytest,
+        # in which case the failure or success of the test is logged separately.
+        # The test nor the class teardown are run when the class setup failed.
+        #
+        # Also a failing test teardown after a failed test is considered an "error" by pytest.
+        # (a failing test teardown after successful test is considered "failure", but is crucially in when=call)
+        if report.when == "call":
             return markup("F", "red")
+        else:
+            return markup("E", "red")
     elif report.when == "call":
         return markup(".", "green")
     else:

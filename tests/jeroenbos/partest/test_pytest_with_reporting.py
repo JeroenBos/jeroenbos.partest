@@ -191,6 +191,99 @@ E       ValueError: Intended to fail"""
         assert "collected 1 item" in pytest_output
         assert "========================= 1 failed, 1 error" in pytest_output
 
+    def test_output_with_skipping_and_failing_class_teardown(self, skipped_test_with_failing_class_teardown_file: str):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([skipped_test_with_failing_class_teardown_file], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "skipped"), TestEvent("teardown", "passed")]
+        #                                                                        ^^^^^^
+        # The failing teardown method is skipped, and the actual pytest teardown passes
+        # Actually, I learned it refers to class teardown, rather than test teardown
+        # Test teardown is contained within "when=call"
+
+        # Check output
+        assert sys_output == markup("s", "yellow")
+
+    def test_output_with_failing_class_setup(self, test_with_failing_class_setup_file: str):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([test_with_failing_class_setup_file], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "failed"), TestEvent("teardown", "passed")]
+
+        # Check output
+        assert sys_output == markup("E", "red")
+
+        assert "collected 1 item" in pytest_output
+        assert "============================== 1 error" in pytest_output
+
+    def test_output_with_failing_class_teardown(self, test_with_failing_class_teardown_file: str):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([test_with_failing_class_teardown_file], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "passed"), TestEvent("call", "passed"), TestEvent("teardown", "failed")]
+
+        # Check output
+        assert sys_output == markup(".", "green") + markup("E", "red")
+
+        assert "collected 1 item" in pytest_output
+        assert "========================= 1 passed, 1 error" in pytest_output
+
+    def test_output_with_failing_class_setup_and_class_teardown(
+        self, test_with_failing_class_setup_and_class_teardown_file: str
+    ):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([test_with_failing_class_setup_and_class_teardown_file], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "failed"), TestEvent("teardown", "passed")]
+
+        # Check output
+        assert sys_output == markup("E", "red")
+
+        assert "collected 1 item" in pytest_output
+        assert "============================== 1 error" in pytest_output
+
+    def test_output_with_failing_test_and_class_teardown(self, test_that_fails_and_class_teardown_file: str):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([test_that_fails_and_class_teardown_file], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "passed"), TestEvent("call", "failed"), TestEvent("teardown", "failed")]
+
+        # Check output
+        assert sys_output == markup("F", "red") + markup("E", "red")
+
+        assert "collected 1 item" in pytest_output
+        assert "========================= 1 failed, 1 error" in pytest_output
+
     def test_directory_structure(self, temp_test_directory: str):
         # Arrange
         pytest_output = TestStringIO()
