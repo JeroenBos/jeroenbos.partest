@@ -29,6 +29,9 @@ def run_pytest(
     """
     Runs pytest.main with the specified args, and collects reports of all tests;
     or exit codes (per _pytest.config.ExitCode) in case it didn't get so far.
+
+    :param pytest_out: The output stream of pytest's output. Defaults to /dev/null.
+    :param out: The output stream of this wrapper's output. Defaults to sys.std_out.
     """
 
     __Session = _create_Session(out)
