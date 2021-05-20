@@ -22,7 +22,8 @@ def temp_test_file():
     path = tempfile.mktemp("_test.py")
     append_to_file(
         path,
-        """
+        """# flake8: noqa
+# type: ignore
 import os
 os.environ["METATESTING"] = "true"
 
