@@ -1,15 +1,17 @@
 import os
+from typing import List
 from _pytest.fixtures import SubRequest
-import pytest
 import shutil
 import tempfile
+from pytest import fixture
+from jeroenbos.partest.typings import TestEvent
 
 from jeroenbos.partest.utils import append_to_file
 
 # all these fixtures are made available to scope tests/** by the import statement in tests/conftest.py
 
 
-@pytest.fixture
+@fixture
 def temp_test_directory(request: SubRequest):
     dir = tempfile.gettempdir()
     yield dir
@@ -17,7 +19,7 @@ def temp_test_directory(request: SubRequest):
     shutil.rmtree(dir)
 
 
-@pytest.fixture
+@fixture
 def temp_test_file():
     path = tempfile.mktemp("_test.py")
     append_to_file(
@@ -34,7 +36,7 @@ import pytest
     os.remove(path)
 
 
-@pytest.fixture
+@fixture
 def failing_test_file(temp_test_file: str) -> str:
     append_to_file(
         temp_test_file,
@@ -45,3 +47,8 @@ def test_that_fails():
 """,
     )
     return temp_test_file
+
+
+@fixture
+def expect_one_failed_test() -> List[TestEvent]:
+    return [TestEvent("setup", "passed"), TestEvent("call", "failed"), TestEvent("teardown", "passed")]

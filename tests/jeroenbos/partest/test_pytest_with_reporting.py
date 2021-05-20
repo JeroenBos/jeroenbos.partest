@@ -1,5 +1,7 @@
 from io import StringIO
+from typing import List
 from _pytest.config import ExitCode
+from jeroenbos.partest.typings import TestEvent
 
 from jeroenbos.partest.pytest_with_reporting import run_pytest
 from jeroenbos.partest.utils import to_string
@@ -10,16 +12,14 @@ class TestPytestWithReporting:
         exit_code = run_pytest([temp_test_file])
         assert exit_code == ExitCode.NO_TESTS_COLLECTED
 
-    def test_output_when_testing_test_that_fails(self, failing_test_file: str):
-        mock_sys_out = StringIO()
+    def test_output_when_testing_test_that_fails(self, failing_test_file: str, expect_one_failed_test: List[TestEvent]):
+        pytest_out = StringIO()
 
-        reports = run_pytest([failing_test_file], mock_sys_out)
-        output = to_string(mock_sys_out)
+        reports = run_pytest([failing_test_file], pytest_out)
+        output = to_string(pytest_out)
 
         assert isinstance(reports, list), f"Exit code: {reports}"
-        assert len(reports) == 3  # setup, test and teardown events
-        assert [report.when for report in reports] == ["setup", "call", "teardown"]
-        assert [report.outcome for report in reports] == ["passed", "failed", "passed"]
+        assert reports == expect_one_failed_test
 
         expected_log_fragments = [
             "Python 3.8.",
