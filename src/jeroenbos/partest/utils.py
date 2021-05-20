@@ -33,7 +33,7 @@ def markup(text: str, color: str = None) -> str:
 
 def append_to_file(path: str, contents: str):
     """Appends the specified contents to the specified file"""
-    with open(path, "w+") as f:
+    with open(path, "a+") as f:
         f.write(contents)
 
 
