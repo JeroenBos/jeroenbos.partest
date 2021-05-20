@@ -4,7 +4,7 @@ from _pytest.config import ExitCode
 from jeroenbos.partest.typings import TestEvent
 
 from jeroenbos.partest.pytest_with_reporting import run_pytest
-from jeroenbos.partest.utils import to_string
+from jeroenbos.partest.utils import markup, to_string
 
 
 class TestPytestWithReporting:
@@ -13,14 +13,24 @@ class TestPytestWithReporting:
         assert exit_code == ExitCode.NO_TESTS_COLLECTED
 
     def test_output_when_testing_test_that_fails(self, failing_test_file: str, expect_one_failed_test: List[TestEvent]):
+        # Arrange
         pytest_out = StringIO()
+        sys_out = StringIO()
 
-        reports = run_pytest([failing_test_file], pytest_out)
-        output = to_string(pytest_out)
+        # Act
+        reports = run_pytest([failing_test_file], pytest_out, sys_out)
 
+        # Assert
+        # Check reports
         assert isinstance(reports, list), f"Exit code: {reports}"
         assert reports == expect_one_failed_test
 
+        # Check output
+        sys_output = to_string(sys_out)
+        assert sys_output == markup("F", "red")
+
+        # Check pytest output
+        pytest_output = to_string(pytest_out)
         expected_log_fragments = [
             "Python 3.8.",
             "pytest-6.2.4, py-1.10.0, pluggy-0.13.1",
@@ -32,4 +42,4 @@ E       ValueError: Intended to fail""",
             "============================== 1 failed",
         ]
         for expected in expected_log_fragments:
-            assert expected in output, f"{expected} not in {output}"
+            assert expected in pytest_output, f"{expected} not in {pytest_output}"

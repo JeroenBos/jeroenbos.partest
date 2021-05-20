@@ -76,12 +76,15 @@ def _create_Session(out: Optional[TextIO]):
 
 
 def get_summary_char(report: Union[TestReport, CollectReport]) -> str:
-    if report.skipped:
-        return markup("s", "yellow")
-    elif report.failed:
-        return markup("F", "red")
+    if report.when == "call":
+        if report.skipped:
+            return markup("s", "yellow")
+        elif report.failed:
+            return markup("F", "red")
+        else:
+            return markup(".", "green")
     else:
-        return markup(".", "green")
+        return ""
 
 
 def _create_terminal_writer_factory(output: Optional[TextIO]):
