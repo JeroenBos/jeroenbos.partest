@@ -1,5 +1,4 @@
 import os
-from _pytest.fixtures import SubRequest
 import shutil
 import tempfile
 from pytest import fixture
@@ -7,14 +6,6 @@ from pytest import fixture
 from jeroenbos.partest.utils import append_to_file
 
 # all these fixtures are made available to scope tests/** by the import statement in tests/conftest.py
-
-
-@fixture
-def temp_test_directory(request: SubRequest):
-    dir = tempfile.gettempdir()
-    yield dir
-
-    shutil.rmtree(dir)
 
 
 @fixture
@@ -39,6 +30,10 @@ from unittest import TestCase
 
 @fixture
 def successful_test_file(temp_test_file: str) -> str:
+    return append_successful_test_file(temp_test_file)
+
+
+def append_successful_test_file(temp_test_file: str) -> str:
     append_to_file(
         temp_test_file,
         """
@@ -92,3 +87,18 @@ class TestWithFailingTearDown(TestCase):
 """,
     )
     return temp_test_file
+
+
+@fixture
+def temp_test_directory():
+    dir = tempfile.mkdtemp()
+
+    append_successful_test_file(os.path.join(dir, "test_file1.py"))
+    append_successful_test_file(os.path.join(dir, "nested", "test_file2.py"))
+
+    yield dir
+
+    try:
+        shutil.rmtree(dir)
+    except PermissionError:
+        pass

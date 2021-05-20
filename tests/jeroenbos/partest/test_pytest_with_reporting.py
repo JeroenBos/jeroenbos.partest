@@ -1,3 +1,4 @@
+import os
 from _pytest.config import ExitCode
 
 from jeroenbos.partest.pytest_with_reporting import run_pytest
@@ -111,3 +112,27 @@ E       ValueError: Intended to fail"""
 
         assert "collected 1 item" in pytest_output
         assert "============================== 1 passed" in pytest_output
+
+    def test_directory_structure(self, temp_test_directory: str):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([temp_test_directory], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        print(pytest_output)
+        assert reports == 2 * [
+            TestEvent("setup", "passed"),
+            TestEvent("call", "passed"),
+            TestEvent("teardown", "passed"),
+        ]
+
+        # Check output
+        assert sys_output == 2 * markup(".", "green")
+
+        assert os.path.join("nested", "test_file2.py") in pytest_output
+        assert "collected 2 items" in pytest_output
+        assert "============================== 2 passed" in pytest_output
