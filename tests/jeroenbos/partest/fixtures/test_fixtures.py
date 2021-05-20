@@ -77,13 +77,78 @@ def skipped_test_with_failing_teardown_file(temp_test_file: str) -> str:
     append_to_file(
         temp_test_file,
         """
-class TestWithFailingTearDown(TestCase):
+class TestSkippedTestWithFailingTearDown(TestCase):
     @pytest.mark.skip("Intended to be skipped")
     def test_that_is_skipped():
         raise ValueError("Intended to be skipped")
 
     def tearDown(self):
         raise ValueError("Teardown intended to fail")
+
+""",
+    )
+    return temp_test_file
+
+
+@fixture
+def test_with_failing_setup_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+class TestWithFailingTearDown(TestCase):
+    def test_after_failed_setup(self):
+        raise ValueError("After setup intended to fail")
+
+    def setUp(self):
+        raise ValueError("Setup intended to fail")
+
+""",
+    )
+    return temp_test_file
+
+
+@fixture
+def test_with_failing_teardown_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+class TestWithFailingTearDown(TestCase):
+    def test_before_failing_teardown(self):
+        pass
+
+    def tearDown(self):
+        raise ValueError("Teardown intended to fail")
+
+""",
+    )
+    return temp_test_file
+
+
+@fixture
+def test_with_failing_setup_and_teardown_file(test_with_failing_setup_file: str) -> str:
+    append_to_file(
+        test_with_failing_setup_file,
+        """
+    def tearDown(self):
+        raise ValueError("Teardown intended to fail")
+
+""",
+    )
+    return test_with_failing_setup_file
+
+
+@fixture
+def test_that_fails_and_teardown_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+class TestThatFailsWithFailingTearDown(TestCase):
+    def test_before_failing_teardown(self):
+        raise ValueError("Test intended to fail")
+
+    def tearDown(self):
+        raise ValueError("Teardown intended to fail")
+
 """,
     )
     return temp_test_file

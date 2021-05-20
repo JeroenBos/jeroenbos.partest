@@ -91,6 +91,8 @@ E       ValueError: Intended to fail"""
         assert reports == [TestEvent("setup", "skipped"), TestEvent("teardown", "passed")]
         #                                                                        ^^^^^^
         # The failing teardown method is skipped, and the actual pytest teardown passes
+        # Actually, I learned it refers to class teardown, rather than test teardown
+        # Test teardown is contained within "when=call"
 
         # Check output
         assert sys_output == markup("s", "yellow")
@@ -113,6 +115,82 @@ E       ValueError: Intended to fail"""
         assert "collected 1 item" in pytest_output
         assert "============================== 1 passed" in pytest_output
 
+    def test_output_with_failing_setup(self, test_with_failing_setup_file: str):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([test_with_failing_setup_file], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "passed"), TestEvent("call", "failed"), TestEvent("teardown", "passed")]
+        # The function test setup fails, but the class setup (which is what when=setup refers to) still succeeds
+
+        # Check output
+        assert sys_output == markup("F", "red")
+
+        assert "collected 1 item" in pytest_output
+        assert "============================== 1 failed" in pytest_output
+
+    def test_output_with_failing_teardown(self, test_with_failing_teardown_file: str):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([test_with_failing_teardown_file], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "passed"), TestEvent("call", "failed"), TestEvent("teardown", "passed")]
+        # Just like when=setup, when=teardown refers to class teardown rather than function teardown, so it passes^
+
+        # Check output
+        assert sys_output == markup("F", "red")
+
+        assert "collected 1 item" in pytest_output
+        assert "============================== 1 failed" in pytest_output
+
+    def test_output_with_failing_setup_and_teardown(self, test_with_failing_setup_and_teardown_file: str):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([test_with_failing_setup_and_teardown_file], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "passed"), TestEvent("call", "failed"), TestEvent("teardown", "passed")]
+        # The test teardown fails, and unlike when=setup, when=teardown the test teardown failing is reflected
+
+        # Check output
+        assert sys_output == markup("F", "red")
+
+        assert "collected 1 item" in pytest_output
+        assert "============================== 1 failed" in pytest_output
+
+    def test_output_with_failing_test_and_teardown(self, test_that_fails_and_teardown_file: str):
+        # Arrange
+        pytest_output = TestStringIO()
+        sys_output = TestStringIO()
+
+        # Act
+        reports = run_pytest([test_that_fails_and_teardown_file], pytest_output, sys_output)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "passed"), TestEvent("call", "failed"), TestEvent("teardown", "failed")]
+        # The test teardown fails, and unlike when=setup, when=teardown the test teardown failing is reflected
+
+        # Check output
+        assert sys_output == markup("F", "red") + markup("E", "red")
+
+        assert "collected 1 item" in pytest_output
+        assert "========================= 1 failed, 1 error" in pytest_output
+
     def test_directory_structure(self, temp_test_directory: str):
         # Arrange
         pytest_output = TestStringIO()
@@ -123,7 +201,6 @@ E       ValueError: Intended to fail"""
 
         # Assert
         # Check reports
-        print(pytest_output)
         assert reports == 2 * [
             TestEvent("setup", "passed"),
             TestEvent("call", "passed"),

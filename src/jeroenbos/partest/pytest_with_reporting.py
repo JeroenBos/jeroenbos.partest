@@ -80,7 +80,12 @@ def get_summary_char(report: TestReport) -> str:
     if report.skipped:
         return markup("s", "yellow")
     elif report.failed:
-        return markup("F", "red")
+        if report.when == "teardown":
+            # When a test fails, a failing test teardown is considered an "error" -not a "failure"- by pytest
+            # (when a test succeeds, a failing test teardown is still considered "failure" by pytest)
+            return markup("E", "red")
+        else:
+            return markup("F", "red")
     elif report.when == "call":
         return markup(".", "green")
     else:
