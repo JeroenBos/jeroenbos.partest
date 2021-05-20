@@ -1,6 +1,6 @@
 from io import StringIO
 import sys
-from typing import Any, List, Optional, TextIO, Type, Union
+from typing import List, Optional, TextIO, Type, Union
 from unittest.mock import patch
 
 from _pytest._io.terminalwriter import TerminalWriter
@@ -11,12 +11,10 @@ import pytest
 
 from jeroenbos.partest.utils import markup, optional
 
-OptionalTextIO = Union[Optional[TextIO], Any]  # Should be Optional[TextIO] but typeguard is buggy
-
 
 def run_pytest(
     args: List[str],
-    sys_out: OptionalTextIO = None,
+    sys_out: Optional[TextIO] = None,
 ) -> Union[int, List[Union[TestReport, CollectReport]]]:
     """
     Runs pytest.main with the specified args, and collects reports of all tests;
@@ -77,7 +75,7 @@ class _Session(Session):  # type: ignore
             return markup(".", "green")
 
 
-def _create_terminal_writer_factory(output: OptionalTextIO):
+def _create_terminal_writer_factory(output: Optional[TextIO]):
     """
     A factory method for creating a `create_terminal_writer` function.
     :param output: The receiver of all original pytest output.
