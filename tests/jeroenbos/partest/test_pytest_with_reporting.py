@@ -1,8 +1,8 @@
 from io import StringIO
 from _pytest.config import ExitCode
-from jeroenbos.partest.typings import TestEvent
 
 from jeroenbos.partest.pytest_with_reporting import run_pytest
+from jeroenbos.partest.typings import TestEvent
 from jeroenbos.partest.utils import markup, to_string
 
 
