@@ -37,6 +37,19 @@ from unittest import TestCase
 
 
 @fixture
+def successful_test_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+def test_that_succeeds():
+    pass
+
+""",
+    )
+    return temp_test_file
+
+
+@fixture
 def failing_test_file(temp_test_file: str) -> str:
     append_to_file(
         temp_test_file,

@@ -103,3 +103,27 @@ E       ValueError: Intended to fail""",
         # Check output
         sys_output = to_string(sys_out)
         assert sys_output == markup("s", "yellow")
+
+    def test_output_with_successful_test(self, successful_test_file: str):
+        # Arrange
+        pytest_out = StringIO()
+        sys_out = StringIO()
+
+        # Act
+        reports = run_pytest([successful_test_file], pytest_out, sys_out)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "passed"), TestEvent("call", "passed"), TestEvent("teardown", "passed")]
+
+        # Check output
+        sys_output = to_string(sys_out)
+        assert sys_output == markup(".", "green")
+
+        expected_log_fragments = [
+            "collected 1 item",
+            "============================== 1 passed",
+        ]
+        pytest_output = to_string(pytest_out)
+        for expected in expected_log_fragments:
+            assert expected in pytest_output, f"{expected} not in {pytest_output}"
