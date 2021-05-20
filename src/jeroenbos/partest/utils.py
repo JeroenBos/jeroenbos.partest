@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from pathlib import Path
 from typing import ContextManager
 
 from _pytest._io.terminalwriter import TerminalWriter
@@ -33,5 +34,9 @@ def markup(text: str, color: str = None) -> str:
 
 def append_to_file(path: str, contents: str):
     """Appends the specified contents to the specified file"""
+
+    # Create parent dir if not exists
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+
     with open(path, "a+") as f:
         f.write(contents)
