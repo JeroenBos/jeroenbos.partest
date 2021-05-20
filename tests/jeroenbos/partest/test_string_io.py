@@ -1,6 +1,9 @@
 from io import StringIO
 
+from tests.utils import pytest_ignore
 
+
+@pytest_ignore
 class TestStringIO(StringIO):
     """
     Wraps io.StringIO with some helper methods.

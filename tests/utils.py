@@ -18,3 +18,11 @@ def get_sink_io() -> TextIO:
     """
     # TODO: Actually, I don't know of a type that sinks the input; will just put it in a string
     return StringIO()
+
+
+def pytest_ignore(cls):
+    """
+    Marks the class as not-a-test-class, to prevent pytest from collecting it and reporting warnings.
+    """
+    cls.__test__ = False
+    return cls

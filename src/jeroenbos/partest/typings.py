@@ -1,13 +1,15 @@
 from dataclasses import dataclass
+from _pytest.reports import TestReport
 from typing import Literal
 
-from _pytest.reports import TestReport
+from tests.utils import pytest_ignore
 
 
 When = Literal["setup", "call", "teardown"]
 Outcome = Literal["passed", "failed", "skipped"]
 
 
+@pytest_ignore
 @dataclass
 class TestEvent:
     when: When
