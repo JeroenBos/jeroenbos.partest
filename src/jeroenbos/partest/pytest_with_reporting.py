@@ -70,16 +70,20 @@ def _create_Session(out: Optional[TextIO]):
             """
             assert isinstance(report, TestReport), "According to typing hints this could also be a CollectReport"
             super(_Session, self).pytest_runtest_logreport(report)
+            previous_report = self.reports[-1] if len(self.reports) != 0 else None
             self.reports.append(report)
-            self.writer.write(get_summary_char(report), flush=True)
+            self.writer.write(get_summary_char(report, previous_report), flush=True)
 
     return _Session
 
 
-def get_summary_char(report: TestReport) -> str:
+def get_summary_char(report: TestReport, previous_report: Optional[TestReport]) -> str:
     if report.skipped:
         return markup("s", "yellow")
     elif report.failed:
+        if report.when == "teardown" and previous_report is not None:
+            if previous_report.when == "call" and previous_report.outcome == "failed":
+                return ""  # skip emitted F when the previous report already did so for the same test
         return markup("F", "red")
     elif report.when == "call":
         return markup(".", "green")
