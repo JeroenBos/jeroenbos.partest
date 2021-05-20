@@ -6,7 +6,7 @@ from unittest.mock import patch
 from _pytest._io.terminalwriter import TerminalWriter
 from _pytest.config import Config, ExitCode, create_terminal_writer
 from _pytest.main import Session
-from _pytest.reports import CollectReport, TestReport
+from _pytest.reports import TestReport
 import pytest
 
 from jeroenbos.partest.utils import markup, optional
@@ -25,7 +25,7 @@ def run_pytest(
     args: List[str],
     pytest_out: Optional[TextIO] = None,
     out: Optional[TextIO] = None,
-) -> Union[ExitCode, List[Union[TestReport, CollectReport]]]:
+) -> Union[ExitCode, List[TestReport]]:
     """
     Runs pytest.main with the specified args, and collects reports of all tests;
     or exit codes (per _pytest.config.ExitCode) in case it didn't get so far.
@@ -60,7 +60,7 @@ def _create_Session(out: Optional[TextIO]):
             self.__class__.instance = self
             super().__init__(config)
             self.writer = TerminalWriter(out)
-            self.reports: List[Union[TestReport, CollectReport]] = []
+            self.reports: List[TestReport] = []
 
         def pytest_runtest_logreport(self, report):
             """
@@ -68,6 +68,7 @@ def _create_Session(out: Optional[TextIO]):
                            but you can't write the type definition,
                            because typeguard influences how pytest inspects it
             """
+            assert isinstance(report, TestReport), "According to typing hints this could also be a CollectReport"
             super(_Session, self).pytest_runtest_logreport(report)
             self.reports.append(report)
             self.writer.write(get_summary_char(report), flush=True)
@@ -75,7 +76,7 @@ def _create_Session(out: Optional[TextIO]):
     return _Session
 
 
-def get_summary_char(report: Union[TestReport, CollectReport]) -> str:
+def get_summary_char(report: TestReport) -> str:
     if report.skipped:
         return markup("s", "yellow")
     elif report.failed:
