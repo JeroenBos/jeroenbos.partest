@@ -17,5 +17,11 @@ class TestStringIO(StringIO):
             return o == str(self)
         return super().__eq__(o)
 
+    def __len__(self) -> int:
+        return len(str(self))
+
+    def __repr__(self) -> str:
+        return str(self)
+
     def __str__(self) -> str:
         return self.getvalue()
