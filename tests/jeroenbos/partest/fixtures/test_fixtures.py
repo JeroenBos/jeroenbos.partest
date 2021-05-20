@@ -1,10 +1,8 @@
 import os
-from typing import List
 from _pytest.fixtures import SubRequest
 import shutil
 import tempfile
 from pytest import fixture
-from jeroenbos.partest.typings import TestEvent
 
 from jeroenbos.partest.utils import append_to_file
 
@@ -47,8 +45,3 @@ def test_that_fails():
 """,
     )
     return temp_test_file
-
-
-@fixture
-def expect_one_failed_test() -> List[TestEvent]:
-    return [TestEvent("setup", "passed"), TestEvent("call", "failed"), TestEvent("teardown", "passed")]

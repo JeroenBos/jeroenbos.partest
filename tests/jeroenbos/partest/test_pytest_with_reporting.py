@@ -1,5 +1,4 @@
 from io import StringIO
-from typing import List
 from _pytest.config import ExitCode
 from jeroenbos.partest.typings import TestEvent
 
@@ -33,7 +32,7 @@ class TestPytestWithReporting:
         for expected in expected_log_fragments:
             assert expected in pytest_output, f"{expected} not in {pytest_output}"
 
-    def test_output_when_testing_test_that_fails(self, failing_test_file: str, expect_one_failed_test: List[TestEvent]):
+    def test_output_when_testing_test_that_fails(self, failing_test_file: str):
         # Arrange
         pytest_out = StringIO()
         sys_out = StringIO()
@@ -44,7 +43,7 @@ class TestPytestWithReporting:
         # Assert
         # Check reports
         assert isinstance(reports, list), f"Exit code: {reports}"
-        assert reports == expect_one_failed_test
+        assert reports == [TestEvent("setup", "passed"), TestEvent("call", "failed"), TestEvent("teardown", "passed")]
 
         # Check output
         sys_output = to_string(sys_out)
