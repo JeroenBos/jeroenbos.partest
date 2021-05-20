@@ -7,14 +7,14 @@
             "request": "launch",
             "args": [
                 "tests",
-                // "-k test_typeguard_hook"
+                // "-k test_output_with_successful_test"
             ],
             "program": "${workspaceFolder}/venv/Scripts/pytest.exe",
             "console": "internalConsole",
             "cwd": "${workspaceFolder}",
             "env": {
             },
-            "justMyCode": false
+            "justMyCode": true
         },
     ]
 }

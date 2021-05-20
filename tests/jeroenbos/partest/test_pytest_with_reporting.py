@@ -109,6 +109,5 @@ E       ValueError: Intended to fail"""
         # Check output
         assert sys_output == markup(".", "green")
 
-        pytest_output
         assert "collected 1 item" in pytest_output
         assert "============================== 1 passed" in pytest_output
