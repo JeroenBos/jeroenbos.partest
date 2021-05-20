@@ -5,7 +5,7 @@ from _pytest.reports import TestReport
 
 
 When = Literal["setup", "call", "teardown"]
-Outcome = Literal["passed", "failed"]
+Outcome = Literal["passed", "failed", "skipped"]
 
 
 @dataclass

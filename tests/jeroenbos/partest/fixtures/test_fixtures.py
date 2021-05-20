@@ -45,3 +45,17 @@ def test_that_fails():
 """,
     )
     return temp_test_file
+
+
+@fixture
+def skipped_test_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+@pytest.mark.skip("Intended to be skipped")
+def test_that_is_skipped():
+    raise ValueError("Intended to be skipped")
+
+""",
+    )
+    return temp_test_file

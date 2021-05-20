@@ -76,13 +76,12 @@ def _create_Session(out: Optional[TextIO]):
 
 
 def get_summary_char(report: Union[TestReport, CollectReport]) -> str:
-    if report.when == "call":
-        if report.skipped:
-            return markup("s", "yellow")
-        elif report.failed:
-            return markup("F", "red")
-        else:
-            return markup(".", "green")
+    if report.skipped:
+        return markup("s", "yellow")
+    elif report.failed:
+        return markup("F", "red")
+    elif report.when == "call":
+        return markup(".", "green")
     else:
         return ""
 

@@ -60,3 +60,28 @@ E       ValueError: Intended to fail""",
         ]
         for expected in expected_log_fragments:
             assert expected in pytest_output, f"{expected} not in {pytest_output}"
+
+    def test_output_when_testing_skipped_test(self, skipped_test_file: str):
+        # Arrange
+        pytest_out = StringIO()
+        sys_out = StringIO()
+
+        # Act
+        reports = run_pytest([skipped_test_file], pytest_out, sys_out)
+
+        # Assert
+        # Check reports
+        assert isinstance(reports, list), f"Exit code: {reports}"
+        assert reports == [TestEvent("setup", "skipped"), TestEvent("teardown", "passed")]
+
+        # Check output
+        sys_output = to_string(sys_out)
+        assert sys_output == markup("s", "yellow")
+
+        # Check pytest output
+        pytest_output = to_string(pytest_out)
+        expected_log_fragments = [
+            "collected 1 item",
+        ]
+        for expected in expected_log_fragments:
+            assert expected in pytest_output, f"{expected} not in {pytest_output}"
