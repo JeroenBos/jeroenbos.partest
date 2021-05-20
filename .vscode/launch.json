@@ -7,6 +7,7 @@
             "request": "launch",
             "args": [
                 "tests",
+                "-s", // writes print messages to stdout
                 // "-k test_output_with_successful_test"
             ],
             "program": "${workspaceFolder}/venv/Scripts/pytest.exe",
