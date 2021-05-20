@@ -27,6 +27,8 @@ import os
 os.environ["METATESTING"] = "true"
 
 import pytest
+import unittest
+from unittest import TestCase
 
 """,
     )
@@ -56,6 +58,23 @@ def skipped_test_file(temp_test_file: str) -> str:
 def test_that_is_skipped():
     raise ValueError("Intended to be skipped")
 
+""",
+    )
+    return temp_test_file
+
+
+@fixture
+def skipped_test_with_failing_teardown_file(temp_test_file: str) -> str:
+    append_to_file(
+        temp_test_file,
+        """
+class TestWithFailingTearDown(TestCase):
+    @pytest.mark.skip("Intended to be skipped")
+    def test_that_is_skipped():
+        raise ValueError("Intended to be skipped")
+
+    def tearDown(self):
+        raise ValueError("Teardown intended to fail")
 """,
     )
     return temp_test_file

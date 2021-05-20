@@ -85,3 +85,21 @@ E       ValueError: Intended to fail""",
         ]
         for expected in expected_log_fragments:
             assert expected in pytest_output, f"{expected} not in {pytest_output}"
+
+    def test_output_when_testing_skipped_test_with_failing_teardown(self, skipped_test_with_failing_teardown_file: str):
+        # Arrange
+        pytest_out = StringIO()
+        sys_out = StringIO()
+
+        # Act
+        reports = run_pytest([skipped_test_with_failing_teardown_file], pytest_out, sys_out)
+
+        # Assert
+        # Check reports
+        assert reports == [TestEvent("setup", "skipped"), TestEvent("teardown", "passed")]
+        #                                                                        ^^^^^^
+        # The failing teardown method is skipped, and the actual pytest teardown passes
+
+        # Check output
+        sys_output = to_string(sys_out)
+        assert sys_output == markup("s", "yellow")
