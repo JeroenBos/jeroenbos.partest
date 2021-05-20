@@ -68,3 +68,6 @@ pip install wheel
 pip install -r requirements.dev.txt
 
 pip install -r requirements.txt
+
+# detach the launch.json file from the git workspace
+git update-index --assume-unchanged .vscode/launch.json
