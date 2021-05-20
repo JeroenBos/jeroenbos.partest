@@ -51,15 +51,14 @@ class TestPytestWithReporting:
 
         # Check pytest output
         pytest_output = to_string(pytest_out)
-        expected_log_fragments = [
-            "collected 1 item",
+        assert "collected 1 item" in pytest_output
+        assert "============================== 1 failed" in pytest_output
+        assert (
             """def test_that_fails():
 >       raise ValueError("Intended to fail")
-E       ValueError: Intended to fail""",
-            "============================== 1 failed",
-        ]
-        for expected in expected_log_fragments:
-            assert expected in pytest_output, f"{expected} not in {pytest_output}"
+E       ValueError: Intended to fail"""
+            in pytest_output
+        )
 
     def test_output_when_testing_skipped_test(self, skipped_test_file: str):
         # Arrange
@@ -80,11 +79,7 @@ E       ValueError: Intended to fail""",
 
         # Check pytest output
         pytest_output = to_string(pytest_out)
-        expected_log_fragments = [
-            "collected 1 item",
-        ]
-        for expected in expected_log_fragments:
-            assert expected in pytest_output, f"{expected} not in {pytest_output}"
+        assert "collected 1 item" in pytest_output
 
     def test_output_when_testing_skipped_test_with_failing_teardown(self, skipped_test_with_failing_teardown_file: str):
         # Arrange
@@ -120,10 +115,5 @@ E       ValueError: Intended to fail""",
         sys_output = to_string(sys_out)
         assert sys_output == markup(".", "green")
 
-        expected_log_fragments = [
-            "collected 1 item",
-            "============================== 1 passed",
-        ]
-        pytest_output = to_string(pytest_out)
-        for expected in expected_log_fragments:
-            assert expected in pytest_output, f"{expected} not in {pytest_output}"
+        assert "collected 1 item" in to_string(pytest_out)
+        assert "============================== 1 passed" in to_string(pytest_out)
