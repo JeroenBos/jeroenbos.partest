@@ -1,6 +1,7 @@
 from contextlib import contextmanager
+from io import StringIO
 from pathlib import Path
-from typing import ContextManager
+from typing import ContextManager, TextIO
 
 from _pytest._io.terminalwriter import TerminalWriter
 
@@ -40,3 +41,11 @@ def append_to_file(path: str, contents: str):
 
     with open(path, "a+") as f:
         f.write(contents)
+
+
+def get_sink_io() -> TextIO:
+    """
+    Gets a TextIO that just sinks its input.
+    """
+    # TODO: Actually, I don't know of a type that sinks the input; will just put it in a string
+    return StringIO()
