@@ -1,5 +1,4 @@
 import sys
-from tests.utils import get_sink_io
 from typing import List, Optional, TextIO, Union
 from unittest.mock import patch
 
@@ -9,7 +8,7 @@ from _pytest.main import Session
 from _pytest.reports import TestReport
 import pytest
 
-from jeroenbos.partest.utils import markup, optional
+from jeroenbos.partest.utils import markup, optional, get_sink_io
 
 # About stdout:
 # There are 3 sources of output:
