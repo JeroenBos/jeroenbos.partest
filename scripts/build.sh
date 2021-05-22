@@ -23,6 +23,10 @@ if [ "$#" -gt 0 ]; then
     fi
 fi
 
+echo "Cleaning ./dist/"
+rm -r ./dist/
+
+
 echo Building...
 python -m build
 
