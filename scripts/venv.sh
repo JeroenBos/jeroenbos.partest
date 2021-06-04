@@ -3,8 +3,8 @@
 # Recreates a venv tailored to this project.
 # 
 # Used environment variables:                               | Defaults to:    |
-# VENV_PATH:   # The path where to create the venv.         | ./venv          |
-# PYTHON:      # The python executable to create venv with. | $(deactivate \  |
+# VENV_PATH    # The path where to create the venv          | ./venv          |
+# PYTHON       # The python executable to create venv with  | $(deactivate \  |
 #                                                           | && which python)|
 #
 ###############################################################################
@@ -12,7 +12,7 @@
 set -eu
 if [[ $PWD != */jeroenbos.partest ]]; then
     echo "fatal: Invoke from root directory"
-    exit 1
+    return 1
 fi
 
 VENV_PATH=${VENV_PATH:-"./venv"}
@@ -33,16 +33,18 @@ if [ -d "$VENV_PATH" ] ; then
     if [ -f "$VENV_ACTIVATE_PATH" ]; then
         "$VENV_ACTIVATE_PATH" deactivate
     fi 
-    # A move is a near-instantaneous operation
-    mv "$VENV_PATH" "./.old-venv"
-    # Slow removal is in the background
-    rm -r "./.old-venv" &
+
+    # Move venv before removal because moving is a near-instantaneous
+    # and then the slow removal can be in the background
+    TMP_DIR=$(mktemp -d)
+    mv "$VENV_PATH" "$TMP_DIR"
+    rm -r "$TMP_DIR" > /dev/null 2>&1 &
 fi
 
 # Finding python must happen after deactivation of the previous venv
 PYTHON=${PYTHON:-$(which python)}
 
-echo Creating venv...
+echo "Creating venv..."
 "$PYTHON" -m venv "$VENV_PATH"
 
 if [ "$ON_WINDOWS" ]; then
@@ -55,10 +57,10 @@ if [ "$ON_WINDOWS" ]; then
     sed -i "s~VIRTUAL_ENV=.*~VIRTUAL_ENV=\"$VENV_PATH\"~g" "$VENV_ACTIVATE_PATH"
 fi
 
-echo Sourcing venv...
+echo "Sourcing venv..."
 source "$VENV_ACTIVATE_PATH"
 
-echo Installing packages...
+echo "Installing packages..."
 python -m pip install --upgrade pip
 
 # Performance optimization for package installation:

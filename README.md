@@ -9,7 +9,7 @@ A project template. Search and replace all occurrences of `partest` and `templat
 
 Assuming you have python >= 3.8 installed, you can run `source ./scripts/venv.py` to (re)create a clean venv.
 
-Tests can be ran using `pytest tests`. 
+Tests can be run using `pytest tests`. 
 This project is setup for usage through VSCode, which will interact for you with other configured tools, `black`, `flake8` and `mypy`.
 
 ## Publish
