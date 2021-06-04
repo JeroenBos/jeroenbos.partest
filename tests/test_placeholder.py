@@ -13,3 +13,10 @@ class TestTypeguard(TestCase):
         """
         with self.assertRaises(TypeError):
             code.give_me_an_int("")
+
+    def test_ignore_typeguard(self):
+        """
+        Demonstrates that typeguard.typeguard_ignore works as expected.
+        """
+        result = code.unguarded_give_me_an_int("")
+        self.assertEqual(result, "")
