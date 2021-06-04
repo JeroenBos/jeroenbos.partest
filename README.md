@@ -1,7 +1,7 @@
 # Description
 
 A project template. Search and replace all occurrences of `partest` and `template` to start using this template.
-
+Also remove `template` from GitHub CI branches.
 
 
 # Development
