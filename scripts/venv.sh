@@ -41,8 +41,21 @@ if [ -d "$VENV_PATH" ] ; then
     rm -r "$TMP_DIR" > /dev/null 2>&1 &
 fi
 
+
 # Finding python must happen after deactivation of the previous venv
-PYTHON=${PYTHON:-$(which python)}
+PYTHON=${PYTHON:-$(which python3.8 2> /dev/null)}
+PYTHON=${PYTHON:-$(which python3   2> /dev/null)}
+PYTHON=${PYTHON:-$(which python    2> /dev/null)}
+
+if [ -z "$PYTHON" ]; then
+    echo "No python found"
+    return 1
+else
+    if ! [[ "$PYTHON_VERSION" =~ ^Python && "$PYTHON_VERSION" =~ 3\.8 ]]; then
+        echo "No python 3.8 found"
+        return 1
+    fi
+fi
 
 echo "Creating venv..."
 "$PYTHON" -m venv "$VENV_PATH"
